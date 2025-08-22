@@ -1,7 +1,8 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import js from "@eslint/js";
+
 import { FlatCompat } from "@eslint/eslintrc";
+import js from "@eslint/js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -11,18 +12,60 @@ const compat = new FlatCompat({
   allConfig: js.configs.all,
 });
 
-export default [
+const config = [
+  {
+    ignores: ["components/ui/**/*"],
+  },
   ...compat.extends(
     "next/core-web-vitals",
     "next/typescript",
     "standard",
-    "plugin:tailwindcss/recommended",
+    // "plugin:tailwindcss/recommended",
     "prettier"
   ),
   {
     rules: {
+      "import/order": [
+        "error",
+        {
+          groups: [
+            "builtin",
+            "external",
+            "internal",
+            ["parent", "sibling"],
+            "index",
+            "object",
+          ],
+
+          "newlines-between": "always",
+
+          pathGroups: [
+            {
+              pattern: "@app/**",
+              group: "external",
+              position: "after",
+            },
+          ],
+
+          pathGroupsExcludedImportTypes: ["builtin"],
+
+          alphabetize: {
+            order: "asc",
+            caseInsensitive: true,
+          },
+        },
+      ],
+      "comma-dangle": "off",
+    },
+  },
+  {
+    files: ["**/*.ts", "**/*.tsx"],
+
+    rules: {
       "no-undef": "off",
-      "@typescript-eslint/triple-slash-reference": "error",
+      "@typescript-eslint/triple-slash-reference": "off",
     },
   },
 ];
+
+export default config;
