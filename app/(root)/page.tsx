@@ -4,18 +4,20 @@ import { Button } from "@/components/ui/button";
 
 import ROUTES from "@/constants/route";
 import LocalSearch from "@/components/search/LocalSearch";
+import HomeFilter from "@/components/filters/HomeFilter";
+// import QuestionCard from "@/components/cards/QuestionCard";
 
 interface SearchParams {
   searchParams: Promise<{ [key: string]: string }>;
 }
 
 const HomePage = async ({ searchParams }: SearchParams) => {
-  const { query = "" } = await searchParams;
+  const { query = "", filter = "" } = await searchParams;
 
   // const filteredQuestions = questions.filter((question) => question.includes(query?.toLowerCase()))
   return (
     <>
-      <section className="flex w-full flex-col-reverse sm:flex-row sm:items-center">
+      <section className="flex w-full flex-col-reverse justify-between sm:flex-row sm:items-center">
         <h1 className="h1-bold text-dark100_light900">All Question</h1>
 
         <Button
@@ -35,8 +37,10 @@ const HomePage = async ({ searchParams }: SearchParams) => {
         />
       </section>
 
+      <HomeFilter />
+
       <div className="mt-10 flex w-full flex-col gap-6">
-        <h1>question card</h1>
+        {/* <QuestionCard question={{}} /> */}
       </div>
     </>
   );
