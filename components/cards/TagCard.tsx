@@ -1,6 +1,8 @@
-import ROUTES from "@/constants/route";
 import Link from "next/link";
+import Image from "next/image";
 import { Badge } from "../ui/badge";
+
+import ROUTES from "@/constants/route";
 
 interface Props {
   _id: string;
@@ -8,22 +10,60 @@ interface Props {
   questions?: number;
   showCount?: boolean;
   compact?: boolean;
+  remove?: boolean;
+  isButton: boolean;
+  handleRemove?: () => void;
 }
-const TagCard = ({ _id, name, questions, showCount, compact }: Props) => {
-  return (
-    <Link href={ROUTES.TAGS(_id)} className="flex justify-between gap-2">
+const TagCard = ({
+  _id,
+  name,
+  questions,
+  showCount,
+  compact,
+  remove,
+  isButton,
+  handleRemove,
+}: Props) => {
+  
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+  };
+
+  const Content = (
+    <>
       <Badge className="subtle-medium background-light800_dark300 text-light400_light500 rounded-md border-none px-4 py-2 uppercase">
         <div className="flex-center space-x-2">
           <i>ICON</i>
           <span>{name}</span>
         </div>
+
+        {remove && (
+          <Image
+            src="/icons/close.svg"
+            width={12}
+            height={12}
+            alt="Delete icon"
+            className="cursor-pointer object-contain invert-0 dark:invert"
+            onClick={handleRemove}
+          />
+        )}
       </Badge>
 
-      {showCount && (
-        <p className="small-medium text-dark500_light700"></p>
-      )}
-    </Link>
+      {showCount && <p className="small-medium text-dark500_light700"></p>}
+    </>
   );
+
+  if (compact) {
+    return isButton ? (
+      <button className="flex justify-between gap-2" onClick={handleClick}>
+        {Content}
+      </button>
+    ) : (
+      <Link href={ROUTES.TAGS(_id)} className="flex justify-between gap-2">
+        {Content}
+      </Link>
+    );
+  }
 };
 
 export default TagCard;
