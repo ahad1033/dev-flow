@@ -22,6 +22,8 @@ export async function POST(request: Request) {
       throw new ValidationError(validatedData.error.flatten().fieldErrors);
 
     const account = await Account.findOne({ providerAccountId });
+
+    console.log("account in provider: ", account);
     if (!account) throw new NotFoundError("Account");
 
     return NextResponse.json(

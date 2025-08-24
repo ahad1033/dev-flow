@@ -1,32 +1,37 @@
 "use client";
 
-import { z, ZodType } from "zod";
+import Link from "next/link";
+import { ZodType } from "zod";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  DefaultValues,
-  FieldValues,
   Path,
-  SubmitHandler,
   useForm,
+  FieldValues,
+  DefaultValues,
+  SubmitHandler,
 } from "react-hook-form";
 
-import { Button } from "@/components/ui/button";
 import {
   Form,
-  FormControl,
-  FormField,
   FormItem,
+  FormField,
   FormLabel,
   FormMessage,
+  FormControl,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import Link from "next/link";
+import { Button } from "@/components/ui/button";
+
+import { ActionResponse } from "@/types/global";
+
 import ROUTES from "@/constants/route";
 
 interface AuthFormProps<T extends FieldValues> {
   defaultValues: T;
   schema: ZodType<T>;
-  onSubmit: (data: T) => Promise<{ success: boolean, data: any }>;
+  onSubmit: (data: T) => Promise<ActionResponse>;
   formType: "SIGN_IN" | "SIGN_UP";
 }
 
@@ -36,13 +41,27 @@ const AuthForm = <T extends FieldValues>({
   formType,
   onSubmit,
 }: AuthFormProps<T>) => {
-  const form = useForm<z.infer<typeof schema>>({
-    resolver: zodResolver(schema),
+  const router = useRouter();
+
+  const form = useForm<T>({
+    resolver: zodResolver(schema as ZodType<T, any, any>),
     defaultValues: defaultValues as DefaultValues<T>,
   });
 
   const handleSubmit: SubmitHandler<T> = async (data) => {
-    console.log(data)
+    const result = (await onSubmit(data)) as ActionResponse;
+
+    if (result?.success) {
+      toast.success(
+        formType === "SIGN_IN"
+          ? "Signed in successfully!"
+          : "Signed up successfully!"
+      );
+
+      router.push(ROUTES.HOME);
+    } else {
+      toast.error(`Error ${result?.error?.message}`);
+    }
   };
 
   const buttonText = formType === "SIGN_IN" ? "Sign in" : "Sign up";
@@ -51,7 +70,7 @@ const AuthForm = <T extends FieldValues>({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
-        className="space-y-6 mt-10"
+        className="mt-10 space-y-6"
       >
         {Object.keys(defaultValues).map((field) => (
           <FormField
