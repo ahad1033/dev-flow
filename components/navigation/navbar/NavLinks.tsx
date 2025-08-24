@@ -9,10 +9,15 @@ import { sidebarLinks } from "@/constants";
 import { usePathname } from "next/navigation";
 import { SheetClose } from "@/components/ui/sheet";
 
-const NavLinks = ({ isMobileNav = false }: { isMobileNav: boolean }) => {
+const NavLinks = ({
+  isMobileNav = false,
+  userId,
+}: {
+  isMobileNav: boolean;
+  userId: string | undefined;
+}) => {
   const pathname = usePathname();
 
-  const userId = 1;
   return (
     <>
       {sidebarLinks.map((item) => {
