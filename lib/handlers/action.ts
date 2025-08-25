@@ -18,6 +18,9 @@ async function action<T>({
   schema,
   authorize = false,
 }: ActionOptions<T>) {
+  console.log("schema: ", schema);
+  console.log("params: ", params);
+  
   if (schema && params) {
     try {
       schema.parse(params);
